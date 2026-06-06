@@ -103,13 +103,6 @@
         .stat-box:last-child { border-right: none; }
         .stat-number { font-family: var(--serif); font-size: 48px; font-weight: 700; color: var(--navy); line-height: 1; }
         .stat-label { font-size: 12px; color: var(--gray-500); text-transform: uppercase; letter-spacing: 2px; margin-top: 0.5rem; font-weight: 600; }
-        .member-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; }
-        .member-card { background: white; border: 1px solid var(--gray-200); padding: 2rem 1.5rem; text-align: center; transition: all 0.3s; }
-        .member-card:hover { box-shadow: 0 4px 16px rgba(0, 26, 87, 0.08); }
-        .avatar { width: 80px; height: 80px; border-radius: 50%; background: var(--navy); display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; margin: 0 auto 1rem; font-size: 28px; font-family: var(--serif); }
-        .member-name { font-family: var(--serif); font-size: 18px; color: var(--navy); margin-bottom: 0.25rem; }
-        .member-role { font-size: 12px; color: var(--accent); text-transform: uppercase; letter-spacing: 1.5px; font-weight: 700; margin-bottom: 0.5rem; }
-        .member-bio { font-size: 13px; color: var(--gray-500); font-style: italic; }
         .admin-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 3rem; }
         .admin-panel { background: white; border: 1px solid var(--gray-200); padding: 2rem; }
         .admin-panel h3 { font-size: 22px; margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 2px solid var(--accent); }
@@ -129,11 +122,11 @@
         .footer-col a:hover { color: white; }
         .footer-bottom { border-top: 1px solid rgba(255,255,255,0.15); padding-top: 2rem; display: flex; justify-content: space-between; color: rgba(255,255,255,0.6); font-size: 13px; }
         .hidden { display: none !important; }
+        .success-box { background: #E8F5E9; border-left: 4px solid #2E7D32; padding: 1.5rem; margin-bottom: 2rem; color: #1B5E20; }
         @media (max-width: 968px) {
             .grid-3 { grid-template-columns: 1fr; }
             .stat-grid { grid-template-columns: 1fr; }
             .stat-box { border-right: none; border-bottom: 1px solid var(--gray-200); }
-            .member-grid { grid-template-columns: repeat(2, 1fr); }
             .admin-grid { grid-template-columns: 1fr; }
             .footer-grid { grid-template-columns: 1fr; gap: 2rem; }
             .hero h1 { font-size: 36px; }
@@ -152,7 +145,7 @@
 <div class="utility-bar">
     <div class="utility-bar-inner">
         <div id="utility-logged-out">
-            <a onclick="showPage('login')">Sign In</a>
+            <a onclick="showPage('login')">Admin Sign In</a>
             <a onclick="showPage('signup')" style="margin-left: 1.5rem;">Become a Member</a>
         </div>
         <div id="utility-logged-in" class="hidden">
@@ -177,7 +170,6 @@
             <button onclick="showPage('home')">Home</button>
             <button onclick="showPage('articles')">Research</button>
             <button onclick="showPage('events')">Events</button>
-            <button onclick="showPage('members')">Community</button>
             <button id="admin-nav-btn" onclick="showPage('admin')" class="hidden">Admin</button>
         </div>
         <div class="nav-links">
@@ -226,7 +218,10 @@
     <div class="form-container">
         <h2>Become a Member</h2>
         <p class="subtitle">Join the Aligned Futures Institute community of researchers, policymakers, and advocates.</p>
-        <form onsubmit="handleSignup(event)">
+        <div id="signup-success" class="success-box hidden">
+            <strong>Thank you for joining!</strong><br>You're now a member of the Aligned Futures Institute. We'll be in touch about upcoming events and publications.
+        </div>
+        <form id="signup-form" onsubmit="handleSignup(event)">
             <div class="form-group"><label>Full Name</label><input type="text" id="signup-name" required></div>
             <div class="form-group"><label>Email Address</label><input type="email" id="signup-email" required></div>
             <div class="form-group"><label>About You</label><textarea id="signup-bio" placeholder="Tell us about your interest in AI safety..."></textarea></div>
@@ -237,40 +232,14 @@
 
 <div id="page-login" class="page">
     <div class="form-container">
-        <h2>Sign In</h2>
-        <p class="subtitle">Access your member dashboard.</p>
+        <h2>Admin Sign In</h2>
+        <p class="subtitle">For institute administrators only. Members do not need to sign in.</p>
         <form onsubmit="handleLogin(event)">
             <div class="form-group"><label>Email Address</label><input type="email" id="login-email" required></div>
+            <div class="form-group"><label>Password</label><input type="password" id="login-password" required></div>
             <button type="submit" class="form-btn">Sign In</button>
         </form>
-        <p style="text-align: center; margin-top: 1.5rem; color: var(--gray-500); font-size: 14px;">
-            Not yet a member? <a onclick="showPage('signup')">Join the Institute</a>
-        </p>
     </div>
-</div>
-
-<div id="page-dashboard" class="page">
-    <section class="dashboard-hero">
-        <div class="dashboard-hero-inner">
-            <div class="eyebrow">Member Dashboard</div>
-            <h1 id="dashboard-welcome">Welcome</h1>
-            <p id="dashboard-since"></p>
-        </div>
-    </section>
-    <section class="section">
-        <div class="section-inner">
-            <div class="stat-grid">
-                <div class="stat-box"><div class="stat-number" id="stat-articles">0</div><div class="stat-label">Publications</div></div>
-                <div class="stat-box"><div class="stat-number" id="stat-events">0</div><div class="stat-label">Upcoming Events</div></div>
-                <div class="stat-box"><div class="stat-number" id="stat-members">0</div><div class="stat-label">Community Members</div></div>
-            </div>
-            <div class="section-header">
-                <div><div class="eyebrow">Recent</div><h2>Latest Publications</h2></div>
-                <a class="view-all" onclick="showPage('articles')">View All →</a>
-            </div>
-            <div class="grid-3" id="dashboard-articles"></div>
-        </div>
-    </section>
 </div>
 
 <div id="page-articles" class="page">
@@ -299,19 +268,6 @@
     </section>
 </div>
 
-<div id="page-members" class="page">
-    <section class="dashboard-hero">
-        <div class="dashboard-hero-inner">
-            <div class="eyebrow">Community</div>
-            <h1>Our Members</h1>
-            <p>The scholars, advocates, and practitioners advancing our mission.</p>
-        </div>
-    </section>
-    <section class="section">
-        <div class="section-inner"><div class="member-grid" id="all-members"></div></div>
-    </section>
-</div>
-
 <div id="page-admin" class="page">
     <section class="dashboard-hero">
         <div class="dashboard-hero-inner">
@@ -322,6 +278,11 @@
     </section>
     <section class="section">
         <div class="section-inner">
+            <div class="stat-grid">
+                <div class="stat-box"><div class="stat-number" id="stat-articles">0</div><div class="stat-label">Publications</div></div>
+                <div class="stat-box"><div class="stat-number" id="stat-events">0</div><div class="stat-label">Upcoming Events</div></div>
+                <div class="stat-box"><div class="stat-number" id="stat-members">0</div><div class="stat-label">Members</div></div>
+            </div>
             <div class="admin-grid">
                 <div class="admin-panel">
                     <h3>Publish Article</h3>
@@ -372,7 +333,6 @@
             <div class="footer-col"><h4>Explore</h4><ul>
                 <li><a onclick="showPage('articles')">Research</a></li>
                 <li><a onclick="showPage('events')">Events</a></li>
-                <li><a onclick="showPage('members')">Community</a></li>
             </ul></div>
             <div class="footer-col"><h4>Engage</h4><ul>
                 <li><a onclick="showPage('signup')">Join</a></li>
@@ -393,16 +353,19 @@
 </footer>
 
 <script>
-// SUPABASE CONFIG - REPLACE WITH YOUR KEYS
 const SUPABASE_URL = 'https://mlmwlriuewslrhcpprhf.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_1qjq_fF163HCg02zaL5QcQ_CeXwFUiU';
 
 const { createClient } = supabase;
 const db = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-var currentUser = null;
+var isAdmin = false;
 
 async function init() {
+    var session = await db.auth.getSession();
+    if (session.data.session) {
+        isAdmin = true;
+    }
     await renderAll();
 }
 
@@ -439,9 +402,9 @@ function articleCard(article, showLink) {
         '</div></article>';
 }
 
-function eventItem(article, showDelete) {
-    var d = formatEventDate(article.date);
-    var deleteBtn = showDelete ? '<button class="btn-delete" onclick="deleteEvent(' + article.id + ')">Remove</button>' : '<div></div>';
+function eventItem(event, showDelete) {
+    var d = formatEventDate(event.date);
+    var deleteBtn = showDelete ? '<button class="btn-delete" onclick="deleteEvent(' + event.id + ')">Remove</button>' : '<div></div>';
     return '<div class="event-item">' +
         '<div class="event-date-box">' +
         '<div class="event-month">' + d.month + '</div>' +
@@ -449,53 +412,41 @@ function eventItem(article, showDelete) {
         '<div class="event-year">' + d.year + '</div>' +
         '</div>' +
         '<div class="event-info">' +
-        '<h4>' + escapeHtml(article.title) + '</h4>' +
-        '<p>' + escapeHtml(article.description) + '</p>' +
-        '<p class="event-meta">' + escapeHtml(article.time) + ' · ' + escapeHtml(article.location) + '</p>' +
+        '<h4>' + escapeHtml(event.title) + '</h4>' +
+        '<p>' + escapeHtml(event.description) + '</p>' +
+        '<p class="event-meta">' + escapeHtml(event.time) + ' · ' + escapeHtml(event.location) + '</p>' +
         '</div>' + deleteBtn + '</div>';
 }
 
-function memberCard(member) {
-    var initials = member.name.split(' ').map(function(n) { return n[0]; }).join('').slice(0,2);
-    var role = member.role ? '<div class="member-role">' + escapeHtml(member.role) + '</div>' : '';
-    var bio = member.bio ? '<div class="member-bio">' + escapeHtml(member.bio) + '</div>' : '';
-    return '<div class="member-card">' +
-        '<div class="avatar">' + initials + '</div>' +
-        '<div class="member-name">' + escapeHtml(member.name) + '</div>' +
-        role + bio + '</div>';
-}
-
 async function renderAll() {
-    var loggedIn = !!currentUser;
-    document.getElementById('utility-logged-out').classList.toggle('hidden', loggedIn);
-    document.getElementById('utility-logged-in').classList.toggle('hidden', !loggedIn);
-    document.getElementById('admin-nav-btn').classList.toggle('hidden', !loggedIn);
-    document.getElementById('join-cta-btn').classList.toggle('hidden', loggedIn);
+    document.getElementById('utility-logged-out').classList.toggle('hidden', isAdmin);
+    document.getElementById('utility-logged-in').classList.toggle('hidden', !isAdmin);
+    document.getElementById('admin-nav-btn').classList.toggle('hidden', !isAdmin);
+    document.getElementById('join-cta-btn').classList.toggle('hidden', isAdmin);
     
-    if (loggedIn) {
-        document.getElementById('welcome-text').textContent = 'Welcome, ' + currentUser.name;
-        document.getElementById('dashboard-welcome').textContent = 'Welcome, ' + currentUser.name;
-        document.getElementById('dashboard-since').textContent = 'Member since ' + (currentUser.join_date || 'today');
+    if (isAdmin) {
+        var user = await db.auth.getUser();
+        if (user.data.user) {
+            document.getElementById('welcome-text').textContent = 'Admin: ' + user.data.user.email;
+        }
     }
     
     var articles = await db.from('articles').select('*').order('id', { ascending: false });
     var events = await db.from('events').select('*').order('id', { ascending: false });
-    var members = await db.from('members').select('*').order('id', { ascending: false });
+    var members = await db.from('members').select('id', { count: 'exact' });
     
     var articlesData = articles.data || [];
     var eventsData = events.data || [];
-    var membersData = members.data || [];
+    var membersCount = members.data ? members.data.length : 0;
     
     document.getElementById('home-articles').innerHTML = articlesData.slice(0, 3).map(function(a) { return articleCard(a, false); }).join('');
     document.getElementById('home-events').innerHTML = eventsData.slice(0, 3).map(function(e) { return eventItem(e, false); }).join('');
-    document.getElementById('dashboard-articles').innerHTML = articlesData.slice(0, 3).map(function(a) { return articleCard(a, false); }).join('');
     document.getElementById('all-articles').innerHTML = articlesData.map(function(a) { return articleCard(a, true); }).join('');
-    document.getElementById('all-events').innerHTML = eventsData.map(function(e) { return eventItem(e, loggedIn); }).join('');
-    document.getElementById('all-members').innerHTML = membersData.map(memberCard).join('');
+    document.getElementById('all-events').innerHTML = eventsData.map(function(e) { return eventItem(e, isAdmin); }).join('');
     
     document.getElementById('stat-articles').textContent = articlesData.length;
     document.getElementById('stat-events').textContent = eventsData.length;
-    document.getElementById('stat-members').textContent = membersData.length;
+    document.getElementById('stat-members').textContent = membersCount;
     
     document.getElementById('articles-count').textContent = 'Published Articles (' + articlesData.length + ')';
     document.getElementById('admin-articles-list').innerHTML = articlesData.map(function(a) {
@@ -520,38 +471,50 @@ async function handleSignup(e) {
     }]);
     
     if (result.error) {
-        alert('Error: ' + result.error.message);
+        if (result.error.message.includes('duplicate')) {
+            alert('A member with this email already exists.');
+        } else {
+            alert('Error: ' + result.error.message);
+        }
     } else {
-        currentUser = { name: name, email: email, bio: bio, role: 'Member', join_date: today };
-        showPage('dashboard');
+        document.getElementById('signup-form').classList.add('hidden');
+        document.getElementById('signup-success').classList.remove('hidden');
+        renderAll();
     }
 }
 
 async function handleLogin(e) {
     e.preventDefault();
     var email = document.getElementById('login-email').value;
-    var result = await db.from('members').select('*').eq('email', email);
+    var password = document.getElementById('login-password').value;
     
-    if (result.data && result.data.length > 0) {
-        currentUser = result.data[0];
-        showPage('dashboard');
+    var result = await db.auth.signInWithPassword({ email: email, password: password });
+    
+    if (result.error) {
+        alert('Sign in failed: ' + result.error.message);
     } else {
-        alert('No account found with that email. Please sign up first.');
+        isAdmin = true;
+        showPage('admin');
     }
 }
 
-function logout() {
-    currentUser = null;
+async function logout() {
+    await db.auth.signOut();
+    isAdmin = false;
     showPage('home');
-    renderAll();
 }
 
 async function handleAddArticle(e) {
     e.preventDefault();
+    var user = await db.auth.getUser();
+    if (!user.data.user) {
+        alert('You must be signed in as an admin.');
+        return;
+    }
     var today = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
     var result = await db.from('articles').insert([{
         title: document.getElementById('article-title').value,
-        author: currentUser.name,
+        author: 'Aligned Futures Institute',
         date: today,
         category: document.getElementById('article-category').value,
         image: document.getElementById('article-image').value,
@@ -570,6 +533,11 @@ async function handleAddArticle(e) {
 
 async function handleAddEvent(e) {
     e.preventDefault();
+    var user = await db.auth.getUser();
+    if (!user.data.user) {
+        alert('You must be signed in as an admin.');
+        return;
+    }
     var result = await db.from('events').insert([{
         title: document.getElementById('event-title').value,
         date: document.getElementById('event-date').value,
@@ -589,15 +557,23 @@ async function handleAddEvent(e) {
 
 async function deleteArticle(id) {
     if (confirm('Are you sure you want to delete this article?')) {
-        await db.from('articles').delete().eq('id', id);
-        renderAll();
+        var result = await db.from('articles').delete().eq('id', id);
+        if (result.error) {
+            alert('Error: ' + result.error.message);
+        } else {
+            renderAll();
+        }
     }
 }
 
 async function deleteEvent(id) {
     if (confirm('Are you sure you want to delete this event?')) {
-        await db.from('events').delete().eq('id', id);
-        renderAll();
+        var result = await db.from('events').delete().eq('id', id);
+        if (result.error) {
+            alert('Error: ' + result.error.message);
+        } else {
+            renderAll();
+        }
     }
 }
 
