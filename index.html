@@ -5,9 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Aligned Futures Institute</title>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800&family=Source+Sans+3:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         :root {
             --navy: #001A57;
@@ -24,684 +22,115 @@
             --serif: 'Playfair Display', Georgia, 'Times New Roman', serif;
             --sans: 'Source Sans 3', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
         }
-        
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        
-        body { 
-            font-family: var(--sans); 
-            background: white; 
-            color: var(--gray-900); 
-            line-height: 1.6;
-            -webkit-font-smoothing: antialiased;
-        }
-        
+        body { font-family: var(--sans); background: white; color: var(--gray-900); line-height: 1.6; -webkit-font-smoothing: antialiased; }
         h1, h2, h3, h4 { font-family: var(--serif); color: var(--navy); line-height: 1.2; }
-        
-        a { color: var(--navy); text-decoration: none; }
+        a { color: var(--navy); text-decoration: none; cursor: pointer; }
         a:hover { text-decoration: underline; }
-        
-        /* UTILITY BAR */
-        .utility-bar {
-            background: var(--navy-dark);
-            color: white;
-            padding: 8px 0;
-            font-size: 13px;
-        }
-        .utility-bar-inner {
-            max-width: 1280px;
-            margin: 0 auto;
-            padding: 0 2rem;
-            display: flex;
-            justify-content: flex-end;
-            gap: 1.5rem;
-        }
+        .page { display: none; }
+        .page.active { display: block; }
+        .utility-bar { background: var(--navy-dark); color: white; padding: 8px 0; font-size: 13px; }
+        .utility-bar-inner { max-width: 1280px; margin: 0 auto; padding: 0 2rem; display: flex; justify-content: flex-end; gap: 1.5rem; }
         .utility-bar a { color: rgba(255,255,255,0.85); }
         .utility-bar a:hover { color: white; text-decoration: none; }
-        
-        /* MAIN HEADER */
-        .main-header {
-            background: white;
-            border-bottom: 1px solid var(--gray-200);
-            padding: 1.5rem 0;
-        }
-        .header-inner {
-            max-width: 1280px;
-            margin: 0 auto;
-            padding: 0 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .logo {
-            display: flex;
-            flex-direction: column;
-        }
-        .logo-title {
-            font-family: var(--serif);
-            font-size: 26px;
-            font-weight: 700;
-            color: var(--navy);
-            letter-spacing: -0.5px;
-        }
-        .logo-subtitle {
-            font-family: var(--sans);
-            font-size: 11px;
-            color: var(--gray-500);
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            margin-top: 2px;
-        }
-        
-        /* MAIN NAV */
-        .main-nav {
-            background: var(--navy);
-            padding: 0;
-        }
-        .nav-inner {
-            max-width: 1280px;
-            margin: 0 auto;
-            padding: 0 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .nav-links {
-            display: flex;
-        }
-        .nav-links button, .nav-links a {
-            background: transparent;
-            border: none;
-            color: white;
-            padding: 1rem 1.5rem;
-            font-size: 14px;
-            font-weight: 500;
-            font-family: var(--sans);
-            cursor: pointer;
-            transition: background 0.2s;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        .nav-links button:hover, .nav-links a:hover {
-            background: var(--navy-light);
-            text-decoration: none;
-        }
-        .nav-cta {
-            background: var(--accent) !important;
-            color: var(--navy-dark) !important;
-            font-weight: 600 !important;
-            padding: 0.75rem 1.5rem !important;
-            border-radius: 0 !important;
-        }
-        
-        /* HERO */
-        .hero {
-            background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
-            color: white;
-            padding: 6rem 2rem;
-            text-align: left;
-            position: relative;
-            overflow: hidden;
-        }
-        .hero::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            right: 0;
-            width: 40%;
-            height: 100%;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><circle cx="50" cy="50" r="1" fill="%23ffffff" opacity="0.1"/></svg>');
-            opacity: 0.3;
-        }
-        .hero-inner {
-            max-width: 1280px;
-            margin: 0 auto;
-            position: relative;
-            z-index: 1;
-        }
-        .hero h1 {
-            font-size: 56px;
-            color: white;
-            margin-bottom: 1.5rem;
-            font-weight: 700;
-            max-width: 800px;
-            line-height: 1.1;
-        }
-        .hero p {
-            font-size: 19px;
-            color: rgba(255,255,255,0.9);
-            max-width: 700px;
-            margin-bottom: 2.5rem;
-            line-height: 1.6;
-            font-weight: 300;
-        }
-        .hero-tag {
-            display: inline-block;
-            background: var(--accent);
-            color: var(--navy-dark);
-            padding: 6px 14px;
-            font-size: 12px;
-            font-weight: 600;
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
-            margin-bottom: 1.5rem;
-        }
-        .btn {
-            display: inline-block;
-            padding: 14px 32px;
-            font-size: 15px;
-            font-weight: 600;
-            font-family: var(--sans);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            cursor: pointer;
-            border: none;
-            transition: all 0.2s;
-            text-decoration: none;
-        }
-        .btn-primary {
-            background: var(--accent);
-            color: var(--navy-dark);
-        }
-        .btn-primary:hover {
-            background: #B8985A;
-            text-decoration: none;
-        }
-        .btn-secondary {
-            background: transparent;
-            color: white;
-            border: 2px solid white;
-            margin-left: 1rem;
-        }
-        .btn-secondary:hover {
-            background: white;
-            color: var(--navy);
-            text-decoration: none;
-        }
-        
-        /* SECTION */
-        .section {
-            padding: 5rem 2rem;
-        }
-        .section-light {
-            background: var(--gray-50);
-        }
-        .section-inner {
-            max-width: 1280px;
-            margin: 0 auto;
-        }
-        .section-header {
-            margin-bottom: 3rem;
-            border-bottom: 3px solid var(--accent);
-            padding-bottom: 1rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-        }
-        .section-header h2 {
-            font-size: 36px;
-            color: var(--navy);
-            font-weight: 700;
-        }
-        .section-header .eyebrow {
-            font-size: 12px;
-            color: var(--gray-500);
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            margin-bottom: 0.5rem;
-            font-weight: 600;
-        }
-        .view-all {
-            font-size: 14px;
-            color: var(--navy);
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        
-        /* MISSION STRIPE */
-        .mission-stripe {
-            background: var(--navy);
-            color: white;
-            padding: 4rem 2rem;
-            text-align: center;
-        }
-        .mission-stripe-inner {
-            max-width: 900px;
-            margin: 0 auto;
-        }
-        .mission-stripe .eyebrow {
-            color: var(--accent);
-        }
-        .mission-stripe h2 {
-            color: white;
-            font-size: 32px;
-            font-weight: 400;
-            font-style: italic;
-            margin: 1rem 0;
-            line-height: 1.4;
-        }
-        
-        /* GRIDS */
-        .grid-3 {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 2rem;
-        }
-        .grid-2 {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 2rem;
-        }
-        
-        /* ARTICLE CARDS */
-        .article-card {
-            background: white;
-            border: 1px solid var(--gray-200);
-            transition: all 0.3s;
-            cursor: pointer;
-            display: flex;
-            flex-direction: column;
-        }
-        .article-card:hover {
-            box-shadow: 0 8px 24px rgba(0, 26, 87, 0.12);
-            transform: translateY(-2px);
-        }
-        .article-image {
-            width: 100%;
-            height: 220px;
-            object-fit: cover;
-            display: block;
-        }
-        .article-content {
-            padding: 1.75rem;
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-        }
-        .article-category {
-            font-size: 11px;
-            color: var(--navy);
-            font-weight: 700;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            margin-bottom: 0.75rem;
-            border-bottom: 2px solid var(--accent);
-            padding-bottom: 0.5rem;
-            display: inline-block;
-            align-self: flex-start;
-        }
-        .article-title {
-            font-family: var(--serif);
-            font-size: 22px;
-            font-weight: 600;
-            color: var(--navy);
-            margin-bottom: 0.75rem;
-            line-height: 1.3;
-        }
-        .article-desc {
-            font-size: 15px;
-            color: var(--gray-700);
-            margin-bottom: 1rem;
-            line-height: 1.6;
-            flex: 1;
-        }
-        .article-meta {
-            font-size: 13px;
-            color: var(--gray-500);
-            border-top: 1px solid var(--gray-200);
-            padding-top: 1rem;
-            margin-top: 1rem;
-            font-style: italic;
-        }
-        .article-link {
-            font-size: 14px;
-            color: var(--navy);
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 1rem;
-        }
-        
-        /* EVENT LIST */
-        .event-item {
-            background: white;
-            border-left: 4px solid var(--accent);
-            padding: 1.5rem 2rem;
-            margin-bottom: 1rem;
-            display: grid;
-            grid-template-columns: 100px 1fr auto;
-            gap: 1.5rem;
-            align-items: center;
-            border-top: 1px solid var(--gray-200);
-            border-right: 1px solid var(--gray-200);
-            border-bottom: 1px solid var(--gray-200);
-        }
-        .event-date-box {
-            text-align: center;
-            border-right: 1px solid var(--gray-200);
-            padding-right: 1.5rem;
-        }
-        .event-month {
-            font-size: 12px;
-            color: var(--accent);
-            text-transform: uppercase;
-            font-weight: 700;
-            letter-spacing: 1.5px;
-        }
-        .event-day {
-            font-family: var(--serif);
-            font-size: 36px;
-            font-weight: 700;
-            color: var(--navy);
-            line-height: 1;
-            margin: 0.25rem 0;
-        }
-        .event-year {
-            font-size: 12px;
-            color: var(--gray-500);
-        }
-        .event-info h4 {
-            font-family: var(--serif);
-            font-size: 20px;
-            color: var(--navy);
-            margin-bottom: 0.5rem;
-        }
-        .event-info p {
-            font-size: 14px;
-            color: var(--gray-700);
-            margin-bottom: 0.25rem;
-        }
-        .event-info .event-meta {
-            font-size: 13px;
-            color: var(--gray-500);
-        }
-        
-        /* FORMS */
-        .form-container {
-            max-width: 500px;
-            margin: 4rem auto;
-            background: white;
-            padding: 3rem;
-            border: 1px solid var(--gray-200);
-        }
-        .form-container h2 {
-            font-size: 32px;
-            margin-bottom: 0.5rem;
-        }
-        .form-container .subtitle {
-            color: var(--gray-500);
-            margin-bottom: 2rem;
-            font-size: 15px;
-        }
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-        label {
-            display: block;
-            font-size: 13px;
-            font-weight: 600;
-            color: var(--navy);
-            margin-bottom: 0.5rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        input, textarea, select {
-            width: 100%;
-            padding: 12px 16px;
-            border: 1px solid var(--gray-300);
-            font-size: 15px;
-            font-family: var(--sans);
-            background: white;
-            transition: border-color 0.2s;
-        }
-        input:focus, textarea:focus, select:focus {
-            outline: none;
-            border-color: var(--navy);
-        }
-        textarea {
-            resize: vertical;
-            min-height: 100px;
-        }
-        .form-btn {
-            background: var(--navy);
-            color: white;
-            border: none;
-            padding: 14px 32px;
-            font-size: 14px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            cursor: pointer;
-            width: 100%;
-            margin-top: 1rem;
-            font-family: var(--sans);
-            transition: background 0.2s;
-        }
-        .form-btn:hover {
-            background: var(--navy-dark);
-        }
-        
-        /* DASHBOARD */
-        .dashboard-hero {
-            background: var(--navy);
-            color: white;
-            padding: 4rem 2rem;
-        }
-        .dashboard-hero-inner {
-            max-width: 1280px;
-            margin: 0 auto;
-        }
-        .dashboard-hero .eyebrow {
-            color: var(--accent);
-            font-size: 12px;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            font-weight: 600;
-        }
-        .dashboard-hero h1 {
-            color: white;
-            font-size: 42px;
-            margin: 0.5rem 0;
-        }
-        .dashboard-hero p {
-            color: rgba(255,255,255,0.85);
-            font-size: 16px;
-        }
-        
-        .stat-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 0;
-            background: white;
-            border: 1px solid var(--gray-200);
-            margin-bottom: 3rem;
-        }
-        .stat-box {
-            padding: 2rem;
-            text-align: center;
-            border-right: 1px solid var(--gray-200);
-        }
-        .stat-box:last-child {
-            border-right: none;
-        }
-        .stat-number {
-            font-family: var(--serif);
-            font-size: 48px;
-            font-weight: 700;
-            color: var(--navy);
-            line-height: 1;
-        }
-        .stat-label {
-            font-size: 12px;
-            color: var(--gray-500);
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            margin-top: 0.5rem;
-            font-weight: 600;
-        }
-        
-        /* MEMBER CARDS */
-        .member-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 1.5rem;
-        }
-        .member-card {
-            background: white;
-            border: 1px solid var(--gray-200);
-            padding: 2rem 1.5rem;
-            text-align: center;
-            transition: all 0.3s;
-        }
-        .member-card:hover {
-            box-shadow: 0 4px 16px rgba(0, 26, 87, 0.08);
-        }
-        .avatar {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            background: var(--navy);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: 600;
-            margin: 0 auto 1rem;
-            font-size: 28px;
-            font-family: var(--serif);
-        }
-        .member-name {
-            font-family: var(--serif);
-            font-size: 18px;
-            color: var(--navy);
-            margin-bottom: 0.25rem;
-        }
-        .member-role {
-            font-size: 12px;
-            color: var(--accent);
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-        }
-        .member-bio {
-            font-size: 13px;
-            color: var(--gray-500);
-            font-style: italic;
-        }
-        
-        /* ADMIN */
-        .admin-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 2rem;
-            margin-bottom: 3rem;
-        }
-        .admin-panel {
-            background: white;
-            border: 1px solid var(--gray-200);
-            padding: 2rem;
-        }
-        .admin-panel h3 {
-            font-size: 22px;
-            margin-bottom: 1.5rem;
-            padding-bottom: 1rem;
-            border-bottom: 2px solid var(--accent);
-        }
-        .admin-list-item {
-            padding: 1rem;
-            background: var(--gray-50);
-            margin-bottom: 0.5rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-left: 3px solid var(--navy);
-        }
-        .admin-list-item strong {
-            color: var(--navy);
-            font-size: 15px;
-        }
-        .admin-list-item p {
-            font-size: 12px;
-            color: var(--gray-500);
-            margin: 0.25rem 0 0;
-        }
-        .btn-delete {
-            background: #B91C1C;
-            color: white;
-            border: none;
-            padding: 6px 14px;
-            font-size: 12px;
-            font-weight: 600;
-            text-transform: uppercase;
-            cursor: pointer;
-            letter-spacing: 1px;
-        }
-        
-        /* FOOTER */
-        .footer {
-            background: var(--navy-dark);
-            color: white;
-            padding: 4rem 2rem 2rem;
-            margin-top: 4rem;
-        }
-        .footer-inner {
-            max-width: 1280px;
-            margin: 0 auto;
-        }
-        .footer-grid {
-            display: grid;
-            grid-template-columns: 2fr 1fr 1fr 1fr;
-            gap: 3rem;
-            margin-bottom: 3rem;
-        }
-        .footer-brand h3 {
-            font-family: var(--serif);
-            color: white;
-            font-size: 22px;
-            margin-bottom: 0.5rem;
-        }
-        .footer-brand p {
-            color: rgba(255,255,255,0.7);
-            font-size: 14px;
-            line-height: 1.6;
-            max-width: 350px;
-        }
-        .footer-col h4 {
-            color: var(--accent);
-            font-family: var(--sans);
-            font-size: 13px;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            margin-bottom: 1rem;
-            font-weight: 600;
-        }
-        .footer-col ul {
-            list-style: none;
-        }
-        .footer-col li {
-            margin-bottom: 0.5rem;
-        }
-        .footer-col a {
-            color: rgba(255,255,255,0.8);
-            font-size: 14px;
-        }
-        .footer-col a:hover {
-            color: white;
-        }
-        .footer-bottom {
-            border-top: 1px solid rgba(255,255,255,0.15);
-            padding-top: 2rem;
-            display: flex;
-            justify-content: space-between;
-            color: rgba(255,255,255,0.6);
-            font-size: 13px;
-        }
-        
-        /* RESPONSIVE */
+        .main-header { background: white; border-bottom: 1px solid var(--gray-200); padding: 1.5rem 0; }
+        .header-inner { max-width: 1280px; margin: 0 auto; padding: 0 2rem; display: flex; justify-content: space-between; align-items: center; }
+        .logo { display: flex; flex-direction: column; cursor: pointer; }
+        .logo-title { font-family: var(--serif); font-size: 26px; font-weight: 700; color: var(--navy); letter-spacing: -0.5px; }
+        .logo-subtitle { font-family: var(--sans); font-size: 11px; color: var(--gray-500); letter-spacing: 2px; text-transform: uppercase; margin-top: 2px; }
+        .main-nav { background: var(--navy); padding: 0; }
+        .nav-inner { max-width: 1280px; margin: 0 auto; padding: 0 2rem; display: flex; justify-content: space-between; align-items: center; }
+        .nav-links { display: flex; }
+        .nav-links button, .nav-links a { background: transparent; border: none; color: white; padding: 1rem 1.5rem; font-size: 14px; font-weight: 500; font-family: var(--sans); cursor: pointer; transition: background 0.2s; text-transform: uppercase; letter-spacing: 0.5px; }
+        .nav-links button:hover, .nav-links a:hover { background: var(--navy-light); text-decoration: none; }
+        .nav-cta { background: var(--accent) !important; color: var(--navy-dark) !important; font-weight: 600 !important; padding: 0.75rem 1.5rem !important; }
+        .hero { background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%); color: white; padding: 6rem 2rem; }
+        .hero-inner { max-width: 1280px; margin: 0 auto; }
+        .hero h1 { font-size: 56px; color: white; margin-bottom: 1.5rem; font-weight: 700; max-width: 800px; line-height: 1.1; }
+        .hero p { font-size: 19px; color: rgba(255,255,255,0.9); max-width: 700px; margin-bottom: 2.5rem; line-height: 1.6; font-weight: 300; }
+        .hero-tag { display: inline-block; background: var(--accent); color: var(--navy-dark); padding: 6px 14px; font-size: 12px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 1.5rem; }
+        .btn { display: inline-block; padding: 14px 32px; font-size: 15px; font-weight: 600; font-family: var(--sans); text-transform: uppercase; letter-spacing: 1px; cursor: pointer; border: none; transition: all 0.2s; text-decoration: none; }
+        .btn-primary { background: var(--accent); color: var(--navy-dark); }
+        .btn-primary:hover { background: #B8985A; }
+        .btn-secondary { background: transparent; color: white; border: 2px solid white; margin-left: 1rem; }
+        .btn-secondary:hover { background: white; color: var(--navy); }
+        .section { padding: 5rem 2rem; }
+        .section-light { background: var(--gray-50); }
+        .section-inner { max-width: 1280px; margin: 0 auto; }
+        .section-header { margin-bottom: 3rem; border-bottom: 3px solid var(--accent); padding-bottom: 1rem; display: flex; justify-content: space-between; align-items: flex-end; }
+        .section-header h2 { font-size: 36px; color: var(--navy); font-weight: 700; }
+        .section-header .eyebrow { font-size: 12px; color: var(--gray-500); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 0.5rem; font-weight: 600; }
+        .view-all { font-size: 14px; color: var(--navy); font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+        .mission-stripe { background: var(--navy); color: white; padding: 4rem 2rem; text-align: center; }
+        .mission-stripe-inner { max-width: 900px; margin: 0 auto; }
+        .mission-stripe .eyebrow { color: var(--accent); font-size: 12px; letter-spacing: 2px; text-transform: uppercase; font-weight: 600; }
+        .mission-stripe h2 { color: white; font-size: 32px; font-weight: 400; font-style: italic; margin: 1rem 0; line-height: 1.4; }
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; }
+        .article-card { background: white; border: 1px solid var(--gray-200); transition: all 0.3s; cursor: pointer; display: flex; flex-direction: column; }
+        .article-card:hover { box-shadow: 0 8px 24px rgba(0, 26, 87, 0.12); transform: translateY(-2px); }
+        .article-image { width: 100%; height: 220px; object-fit: cover; display: block; background: var(--gray-100); }
+        .article-content { padding: 1.75rem; flex: 1; display: flex; flex-direction: column; }
+        .article-category { font-size: 11px; color: var(--navy); font-weight: 700; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 0.75rem; border-bottom: 2px solid var(--accent); padding-bottom: 0.5rem; display: inline-block; align-self: flex-start; }
+        .article-title { font-family: var(--serif); font-size: 22px; font-weight: 600; color: var(--navy); margin-bottom: 0.75rem; line-height: 1.3; }
+        .article-desc { font-size: 15px; color: var(--gray-700); margin-bottom: 1rem; line-height: 1.6; flex: 1; }
+        .article-meta { font-size: 13px; color: var(--gray-500); border-top: 1px solid var(--gray-200); padding-top: 1rem; margin-top: 1rem; font-style: italic; }
+        .article-link { font-size: 14px; color: var(--navy); font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 1rem; display: inline-block; }
+        .event-item { background: white; border-left: 4px solid var(--accent); padding: 1.5rem 2rem; margin-bottom: 1rem; display: grid; grid-template-columns: 100px 1fr auto; gap: 1.5rem; align-items: center; border-top: 1px solid var(--gray-200); border-right: 1px solid var(--gray-200); border-bottom: 1px solid var(--gray-200); }
+        .event-date-box { text-align: center; border-right: 1px solid var(--gray-200); padding-right: 1.5rem; }
+        .event-month { font-size: 12px; color: var(--accent); text-transform: uppercase; font-weight: 700; letter-spacing: 1.5px; }
+        .event-day { font-family: var(--serif); font-size: 36px; font-weight: 700; color: var(--navy); line-height: 1; margin: 0.25rem 0; }
+        .event-year { font-size: 12px; color: var(--gray-500); }
+        .event-info h4 { font-family: var(--serif); font-size: 20px; color: var(--navy); margin-bottom: 0.5rem; }
+        .event-info p { font-size: 14px; color: var(--gray-700); margin-bottom: 0.25rem; }
+        .event-info .event-meta { font-size: 13px; color: var(--gray-500); }
+        .form-container { max-width: 500px; margin: 4rem auto; background: white; padding: 3rem; border: 1px solid var(--gray-200); }
+        .form-container h2 { font-size: 32px; margin-bottom: 0.5rem; }
+        .form-container .subtitle { color: var(--gray-500); margin-bottom: 2rem; font-size: 15px; }
+        .form-group { margin-bottom: 1.5rem; }
+        label { display: block; font-size: 13px; font-weight: 600; color: var(--navy); margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 1px; }
+        input, textarea, select { width: 100%; padding: 12px 16px; border: 1px solid var(--gray-300); font-size: 15px; font-family: var(--sans); background: white; transition: border-color 0.2s; }
+        input:focus, textarea:focus, select:focus { outline: none; border-color: var(--navy); }
+        textarea { resize: vertical; min-height: 100px; }
+        .form-btn { background: var(--navy); color: white; border: none; padding: 14px 32px; font-size: 14px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; width: 100%; margin-top: 1rem; font-family: var(--sans); transition: background 0.2s; }
+        .form-btn:hover { background: var(--navy-dark); }
+        .dashboard-hero { background: var(--navy); color: white; padding: 4rem 2rem; }
+        .dashboard-hero-inner { max-width: 1280px; margin: 0 auto; }
+        .dashboard-hero .eyebrow { color: var(--accent); font-size: 12px; letter-spacing: 2px; text-transform: uppercase; font-weight: 600; }
+        .dashboard-hero h1 { color: white; font-size: 42px; margin: 0.5rem 0; }
+        .dashboard-hero p { color: rgba(255,255,255,0.85); font-size: 16px; }
+        .stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; background: white; border: 1px solid var(--gray-200); margin-bottom: 3rem; }
+        .stat-box { padding: 2rem; text-align: center; border-right: 1px solid var(--gray-200); }
+        .stat-box:last-child { border-right: none; }
+        .stat-number { font-family: var(--serif); font-size: 48px; font-weight: 700; color: var(--navy); line-height: 1; }
+        .stat-label { font-size: 12px; color: var(--gray-500); text-transform: uppercase; letter-spacing: 2px; margin-top: 0.5rem; font-weight: 600; }
+        .member-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; }
+        .member-card { background: white; border: 1px solid var(--gray-200); padding: 2rem 1.5rem; text-align: center; transition: all 0.3s; }
+        .member-card:hover { box-shadow: 0 4px 16px rgba(0, 26, 87, 0.08); }
+        .avatar { width: 80px; height: 80px; border-radius: 50%; background: var(--navy); display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; margin: 0 auto 1rem; font-size: 28px; font-family: var(--serif); }
+        .member-name { font-family: var(--serif); font-size: 18px; color: var(--navy); margin-bottom: 0.25rem; }
+        .member-role { font-size: 12px; color: var(--accent); text-transform: uppercase; letter-spacing: 1.5px; font-weight: 700; margin-bottom: 0.5rem; }
+        .member-bio { font-size: 13px; color: var(--gray-500); font-style: italic; }
+        .admin-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 3rem; }
+        .admin-panel { background: white; border: 1px solid var(--gray-200); padding: 2rem; }
+        .admin-panel h3 { font-size: 22px; margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 2px solid var(--accent); }
+        .admin-list-item { padding: 1rem; background: var(--gray-50); margin-bottom: 0.5rem; display: flex; justify-content: space-between; align-items: center; border-left: 3px solid var(--navy); }
+        .admin-list-item strong { color: var(--navy); font-size: 15px; }
+        .admin-list-item p { font-size: 12px; color: var(--gray-500); margin: 0.25rem 0 0; }
+        .btn-delete { background: #B91C1C; color: white; border: none; padding: 6px 14px; font-size: 12px; font-weight: 600; text-transform: uppercase; cursor: pointer; letter-spacing: 1px; }
+        .footer { background: var(--navy-dark); color: white; padding: 4rem 2rem 2rem; margin-top: 4rem; }
+        .footer-inner { max-width: 1280px; margin: 0 auto; }
+        .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 3rem; margin-bottom: 3rem; }
+        .footer-brand h3 { font-family: var(--serif); color: white; font-size: 22px; margin-bottom: 0.5rem; }
+        .footer-brand p { color: rgba(255,255,255,0.7); font-size: 14px; line-height: 1.6; max-width: 350px; }
+        .footer-col h4 { color: var(--accent); font-family: var(--sans); font-size: 13px; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 1rem; font-weight: 600; }
+        .footer-col ul { list-style: none; }
+        .footer-col li { margin-bottom: 0.5rem; }
+        .footer-col a { color: rgba(255,255,255,0.8); font-size: 14px; }
+        .footer-col a:hover { color: white; }
+        .footer-bottom { border-top: 1px solid rgba(255,255,255,0.15); padding-top: 2rem; display: flex; justify-content: space-between; color: rgba(255,255,255,0.6); font-size: 13px; }
+        .hidden { display: none !important; }
         @media (max-width: 968px) {
             .grid-3 { grid-template-columns: 1fr; }
-            .grid-2 { grid-template-columns: 1fr; }
             .stat-grid { grid-template-columns: 1fr; }
             .stat-box { border-right: none; border-bottom: 1px solid var(--gray-200); }
             .member-grid { grid-template-columns: repeat(2, 1fr); }
@@ -719,618 +148,461 @@
     </style>
 </head>
 <body>
-    <div id="root"></div>
+
+<div class="utility-bar">
+    <div class="utility-bar-inner">
+        <div id="utility-logged-out">
+            <a onclick="showPage('login')">Sign In</a>
+            <a onclick="showPage('signup')" style="margin-left: 1.5rem;">Become a Member</a>
+        </div>
+        <div id="utility-logged-in" class="hidden">
+            <span id="welcome-text" style="color: rgba(255,255,255,0.85);"></span>
+            <a onclick="logout()" style="margin-left: 1.5rem;">Sign Out</a>
+        </div>
+    </div>
+</div>
+
+<div class="main-header">
+    <div class="header-inner">
+        <div class="logo" onclick="showPage('home')">
+            <div class="logo-title">Aligned Futures Institute</div>
+            <div class="logo-subtitle">Advancing AI Safety &amp; Alignment</div>
+        </div>
+    </div>
+</div>
+
+<nav class="main-nav">
+    <div class="nav-inner">
+        <div class="nav-links">
+            <button onclick="showPage('home')">Home</button>
+            <button onclick="showPage('articles')">Research</button>
+            <button onclick="showPage('events')">Events</button>
+            <button onclick="showPage('members')">Community</button>
+            <button id="admin-nav-btn" onclick="showPage('admin')" class="hidden">Admin</button>
+        </div>
+        <div class="nav-links">
+            <button id="join-cta-btn" class="nav-cta" onclick="showPage('signup')">Join the Institute</button>
+        </div>
+    </div>
+</nav>
+
+<div id="page-home" class="page active">
+    <section class="hero">
+        <div class="hero-inner">
+            <div class="hero-tag">A Non-Profit Initiative</div>
+            <h1>Charting a course toward beneficial artificial intelligence.</h1>
+            <p>The Aligned Futures Institute convenes researchers, policymakers, and technologists committed to ensuring that advanced AI systems remain safe, transparent, and aligned with human values.</p>
+            <button class="btn btn-primary" onclick="showPage('signup')">Become a Member</button>
+            <button class="btn btn-secondary" onclick="showPage('articles')">Read Our Research</button>
+        </div>
+    </section>
+    <section class="mission-stripe">
+        <div class="mission-stripe-inner">
+            <div class="eyebrow">Our Mission</div>
+            <h2>"To advance the responsible development of artificial intelligence through rigorous research, principled policy advocacy, and engaged scholarship."</h2>
+        </div>
+    </section>
+    <section class="section">
+        <div class="section-inner">
+            <div class="section-header">
+                <div><div class="eyebrow">Recent Publications</div><h2>Research &amp; Analysis</h2></div>
+                <a class="view-all" onclick="showPage('articles')">View All Research →</a>
+            </div>
+            <div class="grid-3" id="home-articles"></div>
+        </div>
+    </section>
+    <section class="section section-light">
+        <div class="section-inner">
+            <div class="section-header">
+                <div><div class="eyebrow">Calendar</div><h2>Upcoming Events</h2></div>
+                <a class="view-all" onclick="showPage('events')">View All Events →</a>
+            </div>
+            <div id="home-events"></div>
+        </div>
+    </section>
+</div>
+
+<div id="page-signup" class="page">
+    <div class="form-container">
+        <h2>Become a Member</h2>
+        <p class="subtitle">Join the Aligned Futures Institute community of researchers, policymakers, and advocates.</p>
+        <form onsubmit="handleSignup(event)">
+            <div class="form-group"><label>Full Name</label><input type="text" id="signup-name" required></div>
+            <div class="form-group"><label>Email Address</label><input type="email" id="signup-email" required></div>
+            <div class="form-group"><label>About You</label><textarea id="signup-bio" placeholder="Tell us about your interest in AI safety..."></textarea></div>
+            <button type="submit" class="form-btn">Create Account</button>
+        </form>
+    </div>
+</div>
+
+<div id="page-login" class="page">
+    <div class="form-container">
+        <h2>Sign In</h2>
+        <p class="subtitle">Access your member dashboard.</p>
+        <form onsubmit="handleLogin(event)">
+            <div class="form-group"><label>Email Address</label><input type="email" id="login-email" required></div>
+            <button type="submit" class="form-btn">Sign In</button>
+        </form>
+        <p style="text-align: center; margin-top: 1.5rem; color: var(--gray-500); font-size: 14px;">
+            Not yet a member? <a onclick="showPage('signup')">Join the Institute</a>
+        </p>
+    </div>
+</div>
+
+<div id="page-dashboard" class="page">
+    <section class="dashboard-hero">
+        <div class="dashboard-hero-inner">
+            <div class="eyebrow">Member Dashboard</div>
+            <h1 id="dashboard-welcome">Welcome</h1>
+            <p id="dashboard-since"></p>
+        </div>
+    </section>
+    <section class="section">
+        <div class="section-inner">
+            <div class="stat-grid">
+                <div class="stat-box"><div class="stat-number" id="stat-articles">0</div><div class="stat-label">Publications</div></div>
+                <div class="stat-box"><div class="stat-number" id="stat-events">0</div><div class="stat-label">Upcoming Events</div></div>
+                <div class="stat-box"><div class="stat-number" id="stat-members">0</div><div class="stat-label">Community Members</div></div>
+            </div>
+            <div class="section-header">
+                <div><div class="eyebrow">Recent</div><h2>Latest Publications</h2></div>
+                <a class="view-all" onclick="showPage('articles')">View All →</a>
+            </div>
+            <div class="grid-3" id="dashboard-articles"></div>
+        </div>
+    </section>
+</div>
+
+<div id="page-articles" class="page">
+    <section class="dashboard-hero">
+        <div class="dashboard-hero-inner">
+            <div class="eyebrow">Publications</div>
+            <h1>Research &amp; Analysis</h1>
+            <p>Scholarly work, policy analysis, and commentary from our research community.</p>
+        </div>
+    </section>
+    <section class="section">
+        <div class="section-inner"><div class="grid-3" id="all-articles"></div></div>
+    </section>
+</div>
+
+<div id="page-events" class="page">
+    <section class="dashboard-hero">
+        <div class="dashboard-hero-inner">
+            <div class="eyebrow">Calendar</div>
+            <h1>Events &amp; Programs</h1>
+            <p>Symposia, workshops, and gatherings of our research community.</p>
+        </div>
+    </section>
+    <section class="section">
+        <div class="section-inner"><div id="all-events"></div></div>
+    </section>
+</div>
+
+<div id="page-members" class="page">
+    <section class="dashboard-hero">
+        <div class="dashboard-hero-inner">
+            <div class="eyebrow">Community</div>
+            <h1>Our Members</h1>
+            <p>The scholars, advocates, and practitioners advancing our mission.</p>
+        </div>
+    </section>
+    <section class="section">
+        <div class="section-inner"><div class="member-grid" id="all-members"></div></div>
+    </section>
+</div>
+
+<div id="page-admin" class="page">
+    <section class="dashboard-hero">
+        <div class="dashboard-hero-inner">
+            <div class="eyebrow">Administration</div>
+            <h1>Content Management</h1>
+            <p>Publish articles, schedule events, and manage institute resources.</p>
+        </div>
+    </section>
+    <section class="section">
+        <div class="section-inner">
+            <div class="admin-grid">
+                <div class="admin-panel">
+                    <h3>Publish Article</h3>
+                    <form onsubmit="handleAddArticle(event)">
+                        <div class="form-group"><label>Title</label><input type="text" id="article-title" required></div>
+                        <div class="form-group"><label>Category</label>
+                            <select id="article-category" required>
+                                <option value="Research">Research</option>
+                                <option value="Policy">Policy</option>
+                                <option value="Analysis">Analysis</option>
+                                <option value="News">News</option>
+                                <option value="Commentary">Commentary</option>
+                            </select>
+                        </div>
+                        <div class="form-group"><label>Image URL</label><input type="text" id="article-image" placeholder="https://..."></div>
+                        <div class="form-group"><label>Description</label><textarea id="article-content" required></textarea></div>
+                        <div class="form-group"><label>External Link</label><input type="url" id="article-link" placeholder="https://..."></div>
+                        <button type="submit" class="form-btn">Publish Article</button>
+                    </form>
+                </div>
+                <div class="admin-panel">
+                    <h3>Schedule Event</h3>
+                    <form onsubmit="handleAddEvent(event)">
+                        <div class="form-group"><label>Event Title</label><input type="text" id="event-title" required></div>
+                        <div class="form-group"><label>Date</label><input type="date" id="event-date" required></div>
+                        <div class="form-group"><label>Time</label><input type="time" id="event-time" required></div>
+                        <div class="form-group"><label>Location</label><input type="text" id="event-location" required placeholder="Virtual or physical location"></div>
+                        <div class="form-group"><label>Description</label><textarea id="event-description" required></textarea></div>
+                        <button type="submit" class="form-btn">Schedule Event</button>
+                    </form>
+                </div>
+            </div>
+            <div class="admin-panel">
+                <h3 id="articles-count">Published Articles</h3>
+                <div id="admin-articles-list"></div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<footer class="footer">
+    <div class="footer-inner">
+        <div class="footer-grid">
+            <div class="footer-brand">
+                <h3>Aligned Futures Institute</h3>
+                <p>A non-profit organization advancing research, policy, and public awareness in artificial intelligence safety and alignment.</p>
+            </div>
+            <div class="footer-col"><h4>Explore</h4><ul>
+                <li><a onclick="showPage('articles')">Research</a></li>
+                <li><a onclick="showPage('events')">Events</a></li>
+                <li><a onclick="showPage('members')">Community</a></li>
+            </ul></div>
+            <div class="footer-col"><h4>Engage</h4><ul>
+                <li><a onclick="showPage('signup')">Join</a></li>
+                <li><a>Newsletter</a></li>
+                <li><a>Donate</a></li>
+            </ul></div>
+            <div class="footer-col"><h4>Connect</h4><ul>
+                <li><a>Contact</a></li>
+                <li><a>Twitter</a></li>
+                <li><a>LinkedIn</a></li>
+            </ul></div>
+        </div>
+        <div class="footer-bottom">
+            <div>&copy; 2024 Aligned Futures Institute. All rights reserved.</div>
+            <div>A 501(c)(3) Non-Profit Organization</div>
+        </div>
+    </div>
+</footer>
+
+<script>
+// SUPABASE CONFIG - REPLACE WITH YOUR KEYS
+const SUPABASE_URL = 'https://mlmwlriuewslrhcpprhf.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_lqjq_ff163HCp0zzaL5Qc0_CeXwF';
+
+const { createClient } = supabase;
+const db = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+var currentUser = null;
+
+async function init() {
+    await renderAll();
+}
+
+function showPage(name) {
+    var pages = document.querySelectorAll('.page');
+    for (var i = 0; i < pages.length; i++) pages[i].classList.remove('active');
+    document.getElementById('page-' + name).classList.add('active');
+    window.scrollTo(0, 0);
+    renderAll();
+}
+
+function formatEventDate(dateStr) {
+    var date = new Date(dateStr);
+    var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    return { month: months[date.getMonth()], day: date.getDate(), year: date.getFullYear() };
+}
+
+function escapeHtml(text) {
+    var div = document.createElement('div');
+    div.textContent = text || '';
+    return div.innerHTML;
+}
+
+function articleCard(article, showLink) {
+    var linkHtml = (showLink && article.link) ? '<a href="' + escapeHtml(article.link) + '" target="_blank" rel="noopener noreferrer" class="article-link">Read Full Article →</a>' : '';
+    return '<article class="article-card">' +
+        '<img src="' + escapeHtml(article.image || 'https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=600&h=400&fit=crop') + '" alt="' + escapeHtml(article.title) + '" class="article-image">' +
+        '<div class="article-content">' +
+        '<span class="article-category">' + escapeHtml(article.category) + '</span>' +
+        '<h3 class="article-title">' + escapeHtml(article.title) + '</h3>' +
+        '<p class="article-desc">' + escapeHtml(article.content) + '</p>' +
+        linkHtml +
+        '<div class="article-meta">By ' + escapeHtml(article.author) + ' · ' + escapeHtml(article.date) + '</div>' +
+        '</div></article>';
+}
+
+function eventItem(article, showDelete) {
+    var d = formatEventDate(article.date);
+    var deleteBtn = showDelete ? '<button class="btn-delete" onclick="deleteEvent(' + article.id + ')">Remove</button>' : '<div></div>';
+    return '<div class="event-item">' +
+        '<div class="event-date-box">' +
+        '<div class="event-month">' + d.month + '</div>' +
+        '<div class="event-day">' + d.day + '</div>' +
+        '<div class="event-year">' + d.year + '</div>' +
+        '</div>' +
+        '<div class="event-info">' +
+        '<h4>' + escapeHtml(article.title) + '</h4>' +
+        '<p>' + escapeHtml(article.description) + '</p>' +
+        '<p class="event-meta">' + escapeHtml(article.time) + ' · ' + escapeHtml(article.location) + '</p>' +
+        '</div>' + deleteBtn + '</div>';
+}
+
+function memberCard(member) {
+    var initials = member.name.split(' ').map(function(n) { return n[0]; }).join('').slice(0,2);
+    var role = member.role ? '<div class="member-role">' + escapeHtml(member.role) + '</div>' : '';
+    var bio = member.bio ? '<div class="member-bio">' + escapeHtml(member.bio) + '</div>' : '';
+    return '<div class="member-card">' +
+        '<div class="avatar">' + initials + '</div>' +
+        '<div class="member-name">' + escapeHtml(member.name) + '</div>' +
+        role + bio + '</div>';
+}
+
+async function renderAll() {
+    var loggedIn = !!currentUser;
+    document.getElementById('utility-logged-out').classList.toggle('hidden', loggedIn);
+    document.getElementById('utility-logged-in').classList.toggle('hidden', !loggedIn);
+    document.getElementById('admin-nav-btn').classList.toggle('hidden', !loggedIn);
+    document.getElementById('join-cta-btn').classList.toggle('hidden', loggedIn);
     
-    <script type="text/babel">
-        const { useState, useEffect } = React;
+    if (loggedIn) {
+        document.getElementById('welcome-text').textContent = 'Welcome, ' + currentUser.name;
+        document.getElementById('dashboard-welcome').textContent = 'Welcome, ' + currentUser.name;
+        document.getElementById('dashboard-since').textContent = 'Member since ' + (currentUser.join_date || 'today');
+    }
+    
+    var articles = await db.from('articles').select('*').order('id', { ascending: false });
+    var events = await db.from('events').select('*').order('id', { ascending: false });
+    var members = await db.from('members').select('*').order('id', { ascending: false });
+    
+    var articlesData = articles.data || [];
+    var eventsData = events.data || [];
+    var membersData = members.data || [];
+    
+    document.getElementById('home-articles').innerHTML = articlesData.slice(0, 3).map(function(a) { return articleCard(a, false); }).join('');
+    document.getElementById('home-events').innerHTML = eventsData.slice(0, 3).map(function(e) { return eventItem(e, false); }).join('');
+    document.getElementById('dashboard-articles').innerHTML = articlesData.slice(0, 3).map(function(a) { return articleCard(a, false); }).join('');
+    document.getElementById('all-articles').innerHTML = articlesData.map(function(a) { return articleCard(a, true); }).join('');
+    document.getElementById('all-events').innerHTML = eventsData.map(function(e) { return eventItem(e, loggedIn); }).join('');
+    document.getElementById('all-members').innerHTML = membersData.map(memberCard).join('');
+    
+    document.getElementById('stat-articles').textContent = articlesData.length;
+    document.getElementById('stat-events').textContent = eventsData.length;
+    document.getElementById('stat-members').textContent = membersData.length;
+    
+    document.getElementById('articles-count').textContent = 'Published Articles (' + articlesData.length + ')';
+    document.getElementById('admin-articles-list').innerHTML = articlesData.map(function(a) {
+        return '<div class="admin-list-item"><div><strong>' + escapeHtml(a.title) + '</strong><p>' + escapeHtml(a.category) + ' · ' + escapeHtml(a.date) + '</p></div>' +
+            '<button class="btn-delete" onclick="deleteArticle(' + a.id + ')">Remove</button></div>';
+    }).join('');
+}
 
-        function AlignedFuturesInstitute() {
-            const [currentUser, setCurrentUser] = useState(null);
-            const [page, setPage] = useState('home');
-            const [articles, setArticles] = useState([
-                { id: 1, title: "Establishing Frameworks for AI Safety Research", author: "Research Team", date: "January 15, 2024", category: "Research", image: "https://images.unsplash.com/photo-1677442d019cecf8721b1fdfb409cd2f0e8d73d5b?w=600&h=400&fit=crop", content: "An examination of the foundational principles that guide modern AI alignment research and the institutional structures needed to advance the field.", link: "" },
-                { id: 2, title: "Policy Recommendations for Responsible AI Development", author: "Policy Division", date: "January 10, 2024", category: "Policy", image: "https://images.unsplash.com/photo-1552664730-d307ca884978?w=600&h=400&fit=crop", content: "A comprehensive analysis of the key policy initiatives that the AI safety community should advocate for at federal and international levels.", link: "" },
-                { id: 3, title: "The Path Forward: Aligning Advanced AI Systems", author: "Editorial Board", date: "January 5, 2024", category: "Analysis", image: "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=600&h=400&fit=crop", content: "Examining the technical and philosophical challenges that lie ahead as artificial intelligence systems grow in capability and influence.", link: "" }
-            ]);
-            const [events, setEvents] = useState([
-                { id: 1, title: "Monthly Alignment Discussion Series", date: "2024-02-15", time: "6:00 PM", location: "Virtual Symposium", description: "A dialogue on recent advances in alignment research with invited speakers from leading institutions." },
-                { id: 2, title: "Policy Workshop: Engaging Lawmakers", date: "2024-02-20", time: "3:00 PM", location: "Virtual", description: "An interactive workshop on effective strategies for communicating AI safety concerns to policymakers and government officials." }
-            ]);
-            const [members, setMembers] = useState([
-                { id: 1, name: "Alex Chen", role: "Co-Founder", email: "alex@aligned.org", bio: "AI Safety Researcher" },
-                { id: 2, name: "Jordan Smith", role: "Policy Lead", email: "jordan@aligned.org", bio: "Policy Advocate" }
-            ]);
-            const [isAdmin, setIsAdmin] = useState(false);
+async function handleSignup(e) {
+    e.preventDefault();
+    var name = document.getElementById('signup-name').value;
+    var email = document.getElementById('signup-email').value;
+    var bio = document.getElementById('signup-bio').value;
+    var today = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+    
+    var result = await db.from('members').insert([{
+        name: name,
+        email: email,
+        bio: bio,
+        role: 'Member',
+        join_date: today
+    }]);
+    
+    if (result.error) {
+        alert('Error: ' + result.error.message);
+    } else {
+        currentUser = { name: name, email: email, bio: bio, role: 'Member', join_date: today };
+        showPage('dashboard');
+    }
+}
 
-            useEffect(() => {
-                const saved = localStorage.getItem('afiUser');
-                const savedArticles = localStorage.getItem('afiArticles');
-                const savedEvents = localStorage.getItem('afiEvents');
-                const savedMembers = localStorage.getItem('afiMembers');
-                
-                if (saved) {
-                    setCurrentUser(JSON.parse(saved));
-                    setIsAdmin(true);
-                }
-                if (savedArticles) setArticles(JSON.parse(savedArticles));
-                if (savedEvents) setEvents(JSON.parse(savedEvents));
-                if (savedMembers) setMembers(JSON.parse(savedMembers));
-            }, []);
+async function handleLogin(e) {
+    e.preventDefault();
+    var email = document.getElementById('login-email').value;
+    var result = await db.from('members').select('*').eq('email', email);
+    
+    if (result.data && result.data.length > 0) {
+        currentUser = result.data[0];
+        showPage('dashboard');
+    } else {
+        alert('No account found with that email. Please sign up first.');
+    }
+}
 
-            useEffect(() => { localStorage.setItem('afiArticles', JSON.stringify(articles)); }, [articles]);
-            useEffect(() => { localStorage.setItem('afiEvents', JSON.stringify(events)); }, [events]);
-            useEffect(() => { localStorage.setItem('afiMembers', JSON.stringify(members)); }, [members]);
+function logout() {
+    currentUser = null;
+    showPage('home');
+    renderAll();
+}
 
-            const handleSignup = (e) => {
-                e.preventDefault();
-                const formData = new FormData(e.target);
-                const user = {
-                    id: Date.now(),
-                    name: formData.get('name'),
-                    email: formData.get('email'),
-                    bio: formData.get('bio') || '',
-                    role: 'Member',
-                    joinDate: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
-                };
-                setCurrentUser(user);
-                setIsAdmin(true);
-                setMembers([...members, user]);
-                localStorage.setItem('afiUser', JSON.stringify(user));
-                setPage('dashboard');
-            };
+async function handleAddArticle(e) {
+    e.preventDefault();
+    var today = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+    var result = await db.from('articles').insert([{
+        title: document.getElementById('article-title').value,
+        author: currentUser.name,
+        date: today,
+        category: document.getElementById('article-category').value,
+        image: document.getElementById('article-image').value,
+        content: document.getElementById('article-content').value,
+        link: document.getElementById('article-link').value
+    }]);
+    
+    if (result.error) {
+        alert('Error: ' + result.error.message);
+    } else {
+        alert('Article published successfully.');
+        e.target.reset();
+        renderAll();
+    }
+}
 
-            const handleLogin = (e) => {
-                e.preventDefault();
-                const email = e.target.email.value;
-                const member = members.find(m => m.email === email);
-                if (member) {
-                    setCurrentUser(member);
-                    setIsAdmin(true);
-                    localStorage.setItem('afiUser', JSON.stringify(member));
-                    setPage('dashboard');
-                } else {
-                    alert('No account found with that email. Please sign up first.');
-                }
-            };
+async function handleAddEvent(e) {
+    e.preventDefault();
+    var result = await db.from('events').insert([{
+        title: document.getElementById('event-title').value,
+        date: document.getElementById('event-date').value,
+        time: document.getElementById('event-time').value,
+        location: document.getElementById('event-location').value,
+        description: document.getElementById('event-description').value
+    }]);
+    
+    if (result.error) {
+        alert('Error: ' + result.error.message);
+    } else {
+        alert('Event scheduled successfully.');
+        e.target.reset();
+        renderAll();
+    }
+}
 
-            const handleAddArticle = (e) => {
-                e.preventDefault();
-                const formData = new FormData(e.target);
-                const newArticle = {
-                    id: Date.now(),
-                    title: formData.get('title'),
-                    author: currentUser.name,
-                    date: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
-                    category: formData.get('category'),
-                    image: formData.get('imageUrl') || 'https://images.unsplash.com/photo-1677442d019cecf8721b1fdfb409cd2f0e8d73d5b?w=600&h=400&fit=crop',
-                    content: formData.get('content'),
-                    link: formData.get('link') || ''
-                };
-                setArticles([newArticle, ...articles]);
-                alert('Article published successfully.');
-                e.target.reset();
-            };
+async function deleteArticle(id) {
+    if (confirm('Are you sure you want to delete this article?')) {
+        await db.from('articles').delete().eq('id', id);
+        renderAll();
+    }
+}
 
-            const handleAddEvent = (e) => {
-                e.preventDefault();
-                const formData = new FormData(e.target);
-                const newEvent = {
-                    id: Date.now(),
-                    title: formData.get('title'),
-                    date: formData.get('date'),
-                    time: formData.get('time'),
-                    location: formData.get('location'),
-                    description: formData.get('description')
-                };
-                setEvents([newEvent, ...events]);
-                alert('Event created successfully.');
-                e.target.reset();
-            };
+async function deleteEvent(id) {
+    if (confirm('Are you sure you want to delete this event?')) {
+        await db.from('events').delete().eq('id', id);
+        renderAll();
+    }
+}
 
-            const handleLogout = () => {
-                setCurrentUser(null);
-                setIsAdmin(false);
-                localStorage.removeItem('afiUser');
-                setPage('home');
-            };
+init();
+</script>
 
-            const deleteArticle = (id) => {
-                if (window.confirm('Are you sure you want to delete this article?')) {
-                    setArticles(articles.filter(a => a.id !== id));
-                }
-            };
-
-            const deleteEvent = (id) => {
-                if (window.confirm('Are you sure you want to delete this event?')) {
-                    setEvents(events.filter(e => e.id !== id));
-                }
-            };
-
-            const formatEventDate = (dateStr) => {
-                const date = new Date(dateStr);
-                return {
-                    month: date.toLocaleDateString('en-US', { month: 'short' }),
-                    day: date.getDate(),
-                    year: date.getFullYear()
-                };
-            };
-
-            const Header = () => (
-                <>
-                    <div className="utility-bar">
-                        <div className="utility-bar-inner">
-                            {currentUser ? (
-                                <>
-                                    <span>Welcome, {currentUser.name}</span>
-                                    <a href="#" onClick={(e) => { e.preventDefault(); handleLogout(); }}>Sign Out</a>
-                                </>
-                            ) : (
-                                <>
-                                    <a href="#" onClick={(e) => { e.preventDefault(); setPage('login'); }}>Sign In</a>
-                                    <a href="#" onClick={(e) => { e.preventDefault(); setPage('signup'); }}>Become a Member</a>
-                                </>
-                            )}
-                        </div>
-                    </div>
-                    <div className="main-header">
-                        <div className="header-inner">
-                            <div className="logo" style={{ cursor: 'pointer' }} onClick={() => setPage(currentUser ? 'dashboard' : 'home')}>
-                                <div className="logo-title">Aligned Futures Institute</div>
-                                <div className="logo-subtitle">Advancing AI Safety & Alignment</div>
-                            </div>
-                        </div>
-                    </div>
-                    <nav className="main-nav">
-                        <div className="nav-inner">
-                            <div className="nav-links">
-                                <button onClick={() => setPage(currentUser ? 'dashboard' : 'home')}>Home</button>
-                                <button onClick={() => setPage('articles')}>Research</button>
-                                <button onClick={() => setPage('events')}>Events</button>
-                                <button onClick={() => setPage('members')}>Community</button>
-                                {isAdmin && <button onClick={() => setPage('admin')}>Admin</button>}
-                            </div>
-                            <div className="nav-links">
-                                {!currentUser && <button className="nav-cta" onClick={() => setPage('signup')}>Join the Institute</button>}
-                            </div>
-                        </div>
-                    </nav>
-                </>
-            );
-
-            const Footer = () => (
-                <footer className="footer">
-                    <div className="footer-inner">
-                        <div className="footer-grid">
-                            <div className="footer-brand">
-                                <h3>Aligned Futures Institute</h3>
-                                <p>A non-profit organization advancing research, policy, and public awareness in artificial intelligence safety and alignment.</p>
-                            </div>
-                            <div className="footer-col">
-                                <h4>Explore</h4>
-                                <ul>
-                                    <li><a href="#" onClick={(e) => { e.preventDefault(); setPage('articles'); }}>Research</a></li>
-                                    <li><a href="#" onClick={(e) => { e.preventDefault(); setPage('events'); }}>Events</a></li>
-                                    <li><a href="#" onClick={(e) => { e.preventDefault(); setPage('members'); }}>Community</a></li>
-                                </ul>
-                            </div>
-                            <div className="footer-col">
-                                <h4>Engage</h4>
-                                <ul>
-                                    <li><a href="#" onClick={(e) => { e.preventDefault(); setPage('signup'); }}>Join</a></li>
-                                    <li><a href="#">Newsletter</a></li>
-                                    <li><a href="#">Donate</a></li>
-                                </ul>
-                            </div>
-                            <div className="footer-col">
-                                <h4>Connect</h4>
-                                <ul>
-                                    <li><a href="#">Contact</a></li>
-                                    <li><a href="#">Twitter</a></li>
-                                    <li><a href="#">LinkedIn</a></li>
-                                </ul>
-                            </div>
-                        </div>
-                        <div className="footer-bottom">
-                            <div>&copy; 2024 Aligned Futures Institute. All rights reserved.</div>
-                            <div>A 501(c)(3) Non-Profit Organization</div>
-                        </div>
-                    </div>
-                </footer>
-            );
-
-            // HOME PAGE
-            if (page === 'home' && !currentUser) {
-                return (
-                    <>
-                        <Header />
-                        <section className="hero">
-                            <div className="hero-inner">
-                                <div className="hero-tag">A Non-Profit Initiative</div>
-                                <h1>Charting a course toward beneficial artificial intelligence.</h1>
-                                <p>The Aligned Futures Institute convenes researchers, policymakers, and technologists committed to ensuring that advanced AI systems remain safe, transparent, and aligned with human values.</p>
-                                <button className="btn btn-primary" onClick={() => setPage('signup')}>Become a Member</button>
-                                <button className="btn btn-secondary" onClick={() => setPage('articles')}>Read Our Research</button>
-                            </div>
-                        </section>
-
-                        <section className="mission-stripe">
-                            <div className="mission-stripe-inner">
-                                <div className="eyebrow">Our Mission</div>
-                                <h2>"To advance the responsible development of artificial intelligence through rigorous research, principled policy advocacy, and engaged scholarship."</h2>
-                            </div>
-                        </section>
-
-                        <section className="section">
-                            <div className="section-inner">
-                                <div className="section-header">
-                                    <div>
-                                        <div className="eyebrow">Recent Publications</div>
-                                        <h2>Research & Analysis</h2>
-                                    </div>
-                                    <a href="#" className="view-all" onClick={(e) => { e.preventDefault(); setPage('articles'); }}>View All Research →</a>
-                                </div>
-                                <div className="grid-3">
-                                    {articles.slice(0, 3).map(article => (
-                                        <article key={article.id} className="article-card">
-                                            <img src={article.image} alt={article.title} className="article-image" />
-                                            <div className="article-content">
-                                                <span className="article-category">{article.category}</span>
-                                                <h3 className="article-title">{article.title}</h3>
-                                                <p className="article-desc">{article.content}</p>
-                                                <div className="article-meta">By {article.author} · {article.date}</div>
-                                            </div>
-                                        </article>
-                                    ))}
-                                </div>
-                            </div>
-                        </section>
-
-                        <section className="section section-light">
-                            <div className="section-inner">
-                                <div className="section-header">
-                                    <div>
-                                        <div className="eyebrow">Calendar</div>
-                                        <h2>Upcoming Events</h2>
-                                    </div>
-                                    <a href="#" className="view-all" onClick={(e) => { e.preventDefault(); setPage('events'); }}>View All Events →</a>
-                                </div>
-                                {events.slice(0, 3).map(event => {
-                                    const dateInfo = formatEventDate(event.date);
-                                    return (
-                                        <div key={event.id} className="event-item">
-                                            <div className="event-date-box">
-                                                <div className="event-month">{dateInfo.month}</div>
-                                                <div className="event-day">{dateInfo.day}</div>
-                                                <div className="event-year">{dateInfo.year}</div>
-                                            </div>
-                                            <div className="event-info">
-                                                <h4>{event.title}</h4>
-                                                <p>{event.description}</p>
-                                                <p className="event-meta">{event.time} · {event.location}</p>
-                                            </div>
-                                        </div>
-                                    );
-                                })}
-                            </div>
-                        </section>
-
-                        <Footer />
-                    </>
-                );
-            }
-
-            // SIGNUP PAGE
-            if (page === 'signup' && !currentUser) {
-                return (
-                    <>
-                        <Header />
-                        <div className="form-container">
-                            <h2>Become a Member</h2>
-                            <p className="subtitle">Join the Aligned Futures Institute community of researchers, policymakers, and advocates.</p>
-                            <form onSubmit={handleSignup}>
-                                <div className="form-group">
-                                    <label>Full Name</label>
-                                    <input type="text" name="name" required />
-                                </div>
-                                <div className="form-group">
-                                    <label>Email Address</label>
-                                    <input type="email" name="email" required />
-                                </div>
-                                <div className="form-group">
-                                    <label>About You</label>
-                                    <textarea name="bio" placeholder="Tell us about your interest in AI safety..."></textarea>
-                                </div>
-                                <button type="submit" className="form-btn">Create Account</button>
-                            </form>
-                        </div>
-                        <Footer />
-                    </>
-                );
-            }
-
-            // LOGIN PAGE
-            if (page === 'login' && !currentUser) {
-                return (
-                    <>
-                        <Header />
-                        <div className="form-container">
-                            <h2>Sign In</h2>
-                            <p className="subtitle">Access your member dashboard.</p>
-                            <form onSubmit={handleLogin}>
-                                <div className="form-group">
-                                    <label>Email Address</label>
-                                    <input type="email" name="email" required />
-                                </div>
-                                <button type="submit" className="form-btn">Sign In</button>
-                            </form>
-                            <p style={{ textAlign: 'center', marginTop: '1.5rem', color: 'var(--gray-500)', fontSize: '14px' }}>
-                                Not yet a member? <a href="#" onClick={(e) => { e.preventDefault(); setPage('signup'); }}>Join the Institute</a>
-                            </p>
-                        </div>
-                        <Footer />
-                    </>
-                );
-            }
-
-            // MEMBER DASHBOARD
-            if (currentUser && page === 'dashboard') {
-                return (
-                    <>
-                        <Header />
-                        <section className="dashboard-hero">
-                            <div className="dashboard-hero-inner">
-                                <div className="eyebrow">Member Dashboard</div>
-                                <h1>Welcome, {currentUser.name}</h1>
-                                <p>Member since {currentUser.joinDate || 'today'}</p>
-                            </div>
-                        </section>
-                        <section className="section">
-                            <div className="section-inner">
-                                <div className="stat-grid">
-                                    <div className="stat-box">
-                                        <div className="stat-number">{articles.length}</div>
-                                        <div className="stat-label">Publications</div>
-                                    </div>
-                                    <div className="stat-box">
-                                        <div className="stat-number">{events.length}</div>
-                                        <div className="stat-label">Upcoming Events</div>
-                                    </div>
-                                    <div className="stat-box">
-                                        <div className="stat-number">{members.length}</div>
-                                        <div className="stat-label">Community Members</div>
-                                    </div>
-                                </div>
-                                <div className="section-header">
-                                    <div>
-                                        <div className="eyebrow">Recent</div>
-                                        <h2>Latest Publications</h2>
-                                    </div>
-                                    <a href="#" className="view-all" onClick={(e) => { e.preventDefault(); setPage('articles'); }}>View All →</a>
-                                </div>
-                                <div className="grid-3">
-                                    {articles.slice(0, 3).map(article => (
-                                        <article key={article.id} className="article-card">
-                                            <img src={article.image} alt={article.title} className="article-image" />
-                                            <div className="article-content">
-                                                <span className="article-category">{article.category}</span>
-                                                <h3 className="article-title">{article.title}</h3>
-                                                <p className="article-desc">{article.content}</p>
-                                                <div className="article-meta">By {article.author} · {article.date}</div>
-                                            </div>
-                                        </article>
-                                    ))}
-                                </div>
-                            </div>
-                        </section>
-                        <Footer />
-                    </>
-                );
-            }
-
-            // ARTICLES PAGE
-            if (page === 'articles') {
-                return (
-                    <>
-                        <Header />
-                        <section className="dashboard-hero">
-                            <div className="dashboard-hero-inner">
-                                <div className="eyebrow">Publications</div>
-                                <h1>Research & Analysis</h1>
-                                <p>Scholarly work, policy analysis, and commentary from our research community.</p>
-                            </div>
-                        </section>
-                        <section className="section">
-                            <div className="section-inner">
-                                <div className="grid-3">
-                                    {articles.map(article => (
-                                        <article key={article.id} className="article-card">
-                                            <img src={article.image} alt={article.title} className="article-image" />
-                                            <div className="article-content">
-                                                <span className="article-category">{article.category}</span>
-                                                <h3 className="article-title">{article.title}</h3>
-                                                <p className="article-desc">{article.content}</p>
-                                                {article.link && <a href={article.link} target="_blank" rel="noopener noreferrer" className="article-link">Read Full Article →</a>}
-                                                <div className="article-meta">By {article.author} · {article.date}</div>
-                                            </div>
-                                        </article>
-                                    ))}
-                                </div>
-                            </div>
-                        </section>
-                        <Footer />
-                    </>
-                );
-            }
-
-            // EVENTS PAGE
-            if (page === 'events') {
-                return (
-                    <>
-                        <Header />
-                        <section className="dashboard-hero">
-                            <div className="dashboard-hero-inner">
-                                <div className="eyebrow">Calendar</div>
-                                <h1>Events & Programs</h1>
-                                <p>Symposia, workshops, and gatherings of our research community.</p>
-                            </div>
-                        </section>
-                        <section className="section">
-                            <div className="section-inner">
-                                {events.map(event => {
-                                    const dateInfo = formatEventDate(event.date);
-                                    return (
-                                        <div key={event.id} className="event-item">
-                                            <div className="event-date-box">
-                                                <div className="event-month">{dateInfo.month}</div>
-                                                <div className="event-day">{dateInfo.day}</div>
-                                                <div className="event-year">{dateInfo.year}</div>
-                                            </div>
-                                            <div className="event-info">
-                                                <h4>{event.title}</h4>
-                                                <p>{event.description}</p>
-                                                <p className="event-meta">{event.time} · {event.location}</p>
-                                            </div>
-                                            {isAdmin && <button className="btn-delete" onClick={() => deleteEvent(event.id)}>Remove</button>}
-                                        </div>
-                                    );
-                                })}
-                            </div>
-                        </section>
-                        <Footer />
-                    </>
-                );
-            }
-
-            // MEMBERS PAGE
-            if (page === 'members') {
-                return (
-                    <>
-                        <Header />
-                        <section className="dashboard-hero">
-                            <div className="dashboard-hero-inner">
-                                <div className="eyebrow">Community</div>
-                                <h1>Our Members</h1>
-                                <p>The scholars, advocates, and practitioners advancing our mission.</p>
-                            </div>
-                        </section>
-                        <section className="section">
-                            <div className="section-inner">
-                                <div className="member-grid">
-                                    {members.map(member => (
-                                        <div key={member.id} className="member-card">
-                                            <div className="avatar">{member.name.split(' ').map(n => n[0]).join('').slice(0,2)}</div>
-                                            <div className="member-name">{member.name}</div>
-                                            {member.role && <div className="member-role">{member.role}</div>}
-                                            {member.bio && <div className="member-bio">{member.bio}</div>}
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        </section>
-                        <Footer />
-                    </>
-                );
-            }
-
-            // ADMIN PANEL
-            if (currentUser && page === 'admin') {
-                return (
-                    <>
-                        <Header />
-                        <section className="dashboard-hero">
-                            <div className="dashboard-hero-inner">
-                                <div className="eyebrow">Administration</div>
-                                <h1>Content Management</h1>
-                                <p>Publish articles, schedule events, and manage institute resources.</p>
-                            </div>
-                        </section>
-                        <section className="section">
-                            <div className="section-inner">
-                                <div className="admin-grid">
-                                    <div className="admin-panel">
-                                        <h3>Publish Article</h3>
-                                        <form onSubmit={handleAddArticle}>
-                                            <div className="form-group">
-                                                <label>Title</label>
-                                                <input type="text" name="title" required />
-                                            </div>
-                                            <div className="form-group">
-                                                <label>Category</label>
-                                                <select name="category" required>
-                                                    <option value="Research">Research</option>
-                                                    <option value="Policy">Policy</option>
-                                                    <option value="Analysis">Analysis</option>
-                                                    <option value="News">News</option>
-                                                    <option value="Commentary">Commentary</option>
-                                                </select>
-                                            </div>
-                                            <div className="form-group">
-                                                <label>Image URL</label>
-                                                <input type="text" name="imageUrl" placeholder="https://..." />
-                                            </div>
-                                            <div className="form-group">
-                                                <label>Description</label>
-                                                <textarea name="content" required></textarea>
-                                            </div>
-                                            <div className="form-group">
-                                                <label>External Link</label>
-                                                <input type="url" name="link" placeholder="https://..." />
-                                            </div>
-                                            <button type="submit" className="form-btn">Publish Article</button>
-                                        </form>
-                                    </div>
-
-                                    <div className="admin-panel">
-                                        <h3>Schedule Event</h3>
-                                        <form onSubmit={handleAddEvent}>
-                                            <div className="form-group">
-                                                <label>Event Title</label>
-                                                <input type="text" name="title" required />
-                                            </div>
-                                            <div className="form-group">
-                                                <label>Date</label>
-                                                <input type="date" name="date" required />
-                                            </div>
-                                            <div className="form-group">
-                                                <label>Time</label>
-                                                <input type="time" name="time" required />
-                                            </div>
-                                            <div className="form-group">
-                                                <label>Location</label>
-                                                <input type="text" name="location" required placeholder="Virtual or physical location" />
-                                            </div>
-                                            <div className="form-group">
-                                                <label>Description</label>
-                                                <textarea name="description" required></textarea>
-                                            </div>
-                                            <button type="submit" className="form-btn">Schedule Event</button>
-                                        </form>
-                                    </div>
-                                </div>
-
-                                <div className="admin-panel">
-                                    <h3>Published Articles ({articles.length})</h3>
-                                    {articles.map(article => (
-                                        <div key={article.id} className="admin-list-item">
-                                            <div>
-                                                <strong>{article.title}</strong>
-                                                <p>{article.category} · {article.date}</p>
-                                            </div>
-                                            <button className="btn-delete" onClick={() => deleteArticle(article.id)}>Remove</button>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        </section>
-                        <Footer />
-                    </>
-                );
-            }
-
-            return null;
-        }
-
-        ReactDOM.render(<AlignedFuturesInstitute />, document.getElementById('root'));
-    </script>
 </body>
 </html>
