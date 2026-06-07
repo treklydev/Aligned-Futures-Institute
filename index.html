@@ -102,7 +102,7 @@
         .dashboard-hero .eyebrow { color: var(--accent); font-size: 12px; letter-spacing: 2px; text-transform: uppercase; font-weight: 600; }
         .dashboard-hero h1 { color: white; font-size: 42px; margin: 0.5rem 0; }
         .dashboard-hero p { color: rgba(255,255,255,0.85); font-size: 16px; }
-        .stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; background: white; border: 1px solid var(--gray-200); margin-bottom: 3rem; }
+        .stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; background: white; border: 1px solid var(--gray-200); margin-bottom: 3rem; }
         .stat-box { padding: 2rem; text-align: center; border-right: 1px solid var(--gray-200); }
         .stat-box:last-child { border-right: none; }
         .stat-number { font-family: var(--serif); font-size: 48px; font-weight: 700; color: var(--navy); line-height: 1; }
@@ -233,11 +233,12 @@
             <h2>Join Our Mailing List</h2>
             <p>Receive updates on our research, programs, and community events as the institute develops.</p>
             <form id="newsletter-form" class="newsletter-form" onsubmit="handleSubscribe(event)">
+                <input type="text" id="subscriber-name" placeholder="Your name" required>
                 <input type="email" id="subscriber-email" placeholder="Your email address" required>
-                <button type="submit">Subscribe</button>
+                <button type="submit">Join</button>
             </form>
             <div id="newsletter-success" class="newsletter-success hidden">
-                <strong>Thank you for subscribing.</strong> We'll be in touch soon.
+                <strong>Welcome to the Institute.</strong> Thank you for joining our community.
             </div>
         </div>
     </section>
@@ -253,8 +254,7 @@
         <form id="signup-form" onsubmit="handleSignup(event)">
             <div class="form-group"><label>Full Name</label><input type="text" id="signup-name" required></div>
             <div class="form-group"><label>Email Address</label><input type="email" id="signup-email" required></div>
-            <div class="form-group"><label>About You</label><textarea id="signup-bio" placeholder="Tell us about your interest in AI safety..."></textarea></div>
-            <button type="submit" class="form-btn">Create Account</button>
+            <button type="submit" class="form-btn">Join</button>
         </form>
     </div>
 </div>
@@ -311,7 +311,6 @@
                 <div class="stat-box"><div class="stat-number" id="stat-articles">0</div><div class="stat-label">Publications</div></div>
                 <div class="stat-box"><div class="stat-number" id="stat-events">0</div><div class="stat-label">Upcoming Events</div></div>
                 <div class="stat-box"><div class="stat-number" id="stat-members">0</div><div class="stat-label">Members</div></div>
-                <div class="stat-box"><div class="stat-number" id="stat-subscribers">0</div><div class="stat-label">Subscribers</div></div>
             </div>
             <div class="admin-grid">
                 <div class="admin-panel">
@@ -350,8 +349,8 @@
                 <div id="admin-articles-list"></div>
             </div>
             <div class="admin-panel">
-                <h3 id="subscribers-count">Mailing List Subscribers</h3>
-                <div id="admin-subscribers-list"></div>
+                <h3 id="members-count">Members</h3>
+                <div id="admin-members-list"></div>
             </div>
         </div>
     </section>
@@ -466,13 +465,11 @@ async function renderAll() {
     
     var articles = await db.from('articles').select('*').order('id', { ascending: false });
     var events = await db.from('events').select('*').order('id', { ascending: false });
-    var members = await db.from('members').select('id', { count: 'exact' });
-    var subscribers = await db.from('subscribers').select('*').order('id', { ascending: false });
+    var members = await db.from('members').select('*').order('id', { ascending: false });
     
     var articlesData = articles.data || [];
     var eventsData = events.data || [];
-    var membersCount = members.data ? members.data.length : 0;
-    var subscribersData = subscribers.data || [];
+    var membersData = members.data || [];
     
     document.getElementById('home-articles').innerHTML = articlesData.slice(0, 3).map(function(a) { return articleCard(a, false); }).join('');
     document.getElementById('home-events').innerHTML = eventsData.slice(0, 3).map(function(e) { return eventItem(e, false); }).join('');
@@ -481,8 +478,7 @@ async function renderAll() {
     
     document.getElementById('stat-articles').textContent = articlesData.length;
     document.getElementById('stat-events').textContent = eventsData.length;
-    document.getElementById('stat-members').textContent = membersCount;
-    document.getElementById('stat-subscribers').textContent = subscribersData.length;
+    document.getElementById('stat-members').textContent = membersData.length;
     
     document.getElementById('articles-count').textContent = 'Published Articles (' + articlesData.length + ')';
     document.getElementById('admin-articles-list').innerHTML = articlesData.map(function(a) {
@@ -490,14 +486,13 @@ async function renderAll() {
             '<button class="btn-delete" onclick="deleteArticle(' + a.id + ')">Remove</button></div>';
     }).join('');
     
-    document.getElementById('subscribers-count').textContent = 'Mailing List Subscribers (' + subscribersData.length + ')';
-    if (subscribersData.length === 0) {
-        document.getElementById('admin-subscribers-list').innerHTML = '<p style="color: var(--gray-500); font-style: italic;">No subscribers yet. Your mailing list signups will appear here.</p>';
+    document.getElementById('members-count').textContent = 'Members (' + membersData.length + ')';
+    if (membersData.length === 0) {
+        document.getElementById('admin-members-list').innerHTML = '<p style="color: var(--gray-500); font-style: italic;">No members yet. Member signups will appear here.</p>';
     } else {
-        document.getElementById('admin-subscribers-list').innerHTML = subscribersData.map(function(s) {
-            var date = new Date(s.subscribed_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
-            return '<div class="admin-list-item"><div><strong>' + escapeHtml(s.email) + '</strong><p>Subscribed ' + date + '</p></div>' +
-                '<button class="btn-delete" onclick="deleteSubscriber(' + s.id + ')">Remove</button></div>';
+        document.getElementById('admin-members-list').innerHTML = membersData.map(function(m) {
+            return '<div class="admin-list-item"><div><strong>' + escapeHtml(m.name) + '</strong><p>' + escapeHtml(m.email) + ' · Joined ' + escapeHtml(m.join_date || 'unknown') + '</p></div>' +
+                '<button class="btn-delete" onclick="deleteMember(' + m.id + ')">Remove</button></div>';
         }).join('');
     }
 }
@@ -506,13 +501,11 @@ async function handleSignup(e) {
     e.preventDefault();
     var name = document.getElementById('signup-name').value;
     var email = document.getElementById('signup-email').value;
-    var bio = document.getElementById('signup-bio').value;
     var today = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
     
     var result = await db.from('members').insert([{
         name: name,
         email: email,
-        bio: bio,
         role: 'Member',
         join_date: today
     }]);
@@ -626,12 +619,20 @@ async function deleteEvent(id) {
 
 async function handleSubscribe(e) {
     e.preventDefault();
+    var name = document.getElementById('subscriber-name').value;
     var email = document.getElementById('subscriber-email').value;
-    var result = await db.from('subscribers').insert([{ email: email }]);
+    var today = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+    
+    var result = await db.from('members').insert([{
+        name: name,
+        email: email,
+        role: 'Member',
+        join_date: today
+    }]);
     
     if (result.error) {
         if (result.error.message.includes('duplicate')) {
-            alert("You're already subscribed to our mailing list.");
+            alert("You're already a member of the institute.");
         } else {
             alert('Error: ' + result.error.message);
         }
@@ -642,9 +643,9 @@ async function handleSubscribe(e) {
     }
 }
 
-async function deleteSubscriber(id) {
-    if (confirm('Are you sure you want to remove this subscriber?')) {
-        var result = await db.from('subscribers').delete().eq('id', id);
+async function deleteMember(id) {
+    if (confirm('Are you sure you want to remove this member?')) {
+        var result = await db.from('members').delete().eq('id', id);
         if (result.error) {
             alert('Error: ' + result.error.message);
         } else {
